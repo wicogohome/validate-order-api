@@ -8,7 +8,7 @@ use App\Http\Requests\NormalizeOrderRequest;
 
 class OrderController extends Controller
 {
-    public function __construct(public OrderService $OrderService) {}
+    public function __construct(private OrderService $OrderService) {}
 
     /**
      * 透過驗證與轉換，將Order data統一為指定格式

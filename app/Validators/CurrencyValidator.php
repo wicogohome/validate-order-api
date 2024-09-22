@@ -7,7 +7,7 @@ use App\Repositories\CurrencyRepository;
 
 class CurrencyValidator implements ValidatorInterface
 {
-    public function __construct(public CurrencyRepository $currencyRepository) {}
+    public function __construct(private CurrencyRepository $currencyRepository) {}
 
     public function validate(array $data): bool
     {
