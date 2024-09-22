@@ -35,4 +35,11 @@ class CurrencyRepository
             'USD' => ['TWD' => ['rate' => 31.0]],
         ];
     }
+
+    public function getExchangeRate(string $fromCurrency, string $toCurrency): float
+    {
+        $mapping = $this->getCurrencyMapping();
+
+        return (float) ($mapping[$fromCurrency][$toCurrency]['rate'] ?? 1);
+    }
 }

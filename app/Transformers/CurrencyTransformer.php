@@ -3,25 +3,13 @@
 namespace App\Transformers;
 
 use App\Exceptions\TransformerException;
-use App\Repositories\CurrencyRepository;
-use App\Transformers\TransformerInterface;
+use App\Services\CurrencyService;
 
 class CurrencyTransformer implements TransformerInterface
 {
-    private int $defaultScale;
-
-    private string $targetCurrency;
-
     public function __construct(
-        public CurrencyRepository $currencyRepository,
-        int $defaultScale = 2,
-        string $targetCurrency = 'TWD',
-    ) {
-        $this->defaultScale = $defaultScale;
-        $this->targetCurrency = $targetCurrency;
-
-        bcscale($this->defaultScale);
-    }
+        private CurrencyService $currencyService,
+    ) {}
 
     public function transform(array $data): array
     {
@@ -48,13 +36,12 @@ class CurrencyTransformer implements TransformerInterface
 
     private function transformByCurrency(float $price, string $currency): array
     {
-        $currencyMapping = $this->currencyRepository->getCurrencyMapping();
-        $rate = $currencyMapping[$currency][$this->targetCurrency]['rate'] ?? 1;
-        $covertedPrice = bcmul($price, $rate);
+        $priceInDefaultCurrency = $this->currencyService->convertToDefaultCurrency($price, $currency);
+        $targetCurrency = $this->currencyService->getDefaultCurrency();
 
         return [
-            'price' => round((float) $covertedPrice, 0),
-            'currency' => $this->targetCurrency,
+            'price' => $priceInDefaultCurrency,
+            'currency' => $targetCurrency,
         ];
     }
 }
