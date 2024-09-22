@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
+use Illuminate\Support\Facades\Route;
 
-Route::post('/orders', [OrderController::class,'validate'])->name('order.validate');
+    Route::post('/orders', [OrderController::class, 'normalize'])->name('order.normalize');
