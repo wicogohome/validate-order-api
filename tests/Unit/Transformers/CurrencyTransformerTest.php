@@ -16,7 +16,7 @@ class CurrencyTransformerTest extends TestCase
     protected function setUp(): void
     {
         $this->currencyServiceMock = $this->createMock(CurrencyService::class);
-        $this->currencyTransformer = app(CurrencyTransformer::class);
+        $this->currencyTransformer = new CurrencyTransformer($this->currencyServiceMock);
     }
 
     public function testTransformWithValidInput()

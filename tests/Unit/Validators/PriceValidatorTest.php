@@ -18,7 +18,7 @@ class PriceValidatorTest extends TestCase
     protected function setUp(): void
     {
         $this->currencyServiceMock = $this->createMock(CurrencyService::class);
-        $this->priceValidator = app(PriceValidator::class);
+        $this->priceValidator = new PriceValidator($this->currencyServiceMock);
         $this->maxPrice = 2000;
     }
 
