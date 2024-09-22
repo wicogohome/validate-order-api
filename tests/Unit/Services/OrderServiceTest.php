@@ -2,20 +2,24 @@
 
 namespace Tests\Unit\Services;
 
+use App\Exceptions\ValidatorException;
 use App\Services\OrderService;
-use PHPUnit\Framework\TestCase;
+use App\Transformers\CurrencyTransformer;
+use App\Validators\CurrencyValidator;
 use App\Validators\NameValidator;
 use App\Validators\PriceValidator;
-use App\Validators\CurrencyValidator;
-use App\Exceptions\ValidatorException;
-use App\Transformers\CurrencyTransformer;
+use PHPUnit\Framework\TestCase;
 
 class OrderServiceTest extends TestCase
 {
     protected $nameValidatorMock;
+
     protected $priceValidatorMock;
+
     protected $currencyValidatorMock;
+
     protected $currencyTransformerMock;
+
     protected $orderService;
 
     protected function setUp(): void
@@ -71,7 +75,6 @@ class OrderServiceTest extends TestCase
             ->method('transform')
             ->with($data)
             ->willReturn($transformedData);
-
 
         $result = $this->orderService->validateAndTransform($data);
 
@@ -154,7 +157,6 @@ class OrderServiceTest extends TestCase
             ->method('transform')
             ->with($data)
             ->willReturn($transformedData);
-
 
         $result = $this->orderService->validateAndTransform($data);
 

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Validators;
 
-use PHPUnit\Framework\TestCase;
-use App\Validators\CurrencyValidator;
 use App\Exceptions\ValidatorException;
 use App\Repositories\CurrencyRepository;
+use App\Validators\CurrencyValidator;
+use PHPUnit\Framework\TestCase;
 
 class CurrencyValidatorTest extends TestCase
 {
@@ -23,8 +23,8 @@ class CurrencyValidatorTest extends TestCase
     {
         // TWD
         $this->currencyRepositoryMock
-        ->method('getAvailableCurrencies')
-        ->willReturn(['USD', 'TWD']);
+            ->method('getAvailableCurrencies')
+            ->willReturn(['USD', 'TWD']);
 
         $this->assertTrue($this->currencyValidator->validate(['currency' => 'TWD']));
     }
@@ -33,12 +33,11 @@ class CurrencyValidatorTest extends TestCase
     {
         // USD
         $this->currencyRepositoryMock
-        ->method('getAvailableCurrencies')
-        ->willReturn(['USD', 'TWD']);
-        
+            ->method('getAvailableCurrencies')
+            ->willReturn(['USD', 'TWD']);
+
         $this->assertTrue($this->currencyValidator->validate(['currency' => 'USD']));
     }
-
 
     public function testValidateWithMissingCurrency()
     {
@@ -64,10 +63,9 @@ class CurrencyValidatorTest extends TestCase
         $this->currencyValidator->validate($data);
     }
 
-
     public function testValidateWithInvalidCurrency()
     {
-         // 不在範圍內的幣別，並預期 ValidatorException
+        // 不在範圍內的幣別，並預期 ValidatorException
 
         $this->currencyRepositoryMock
             ->method('getAvailableCurrencies')

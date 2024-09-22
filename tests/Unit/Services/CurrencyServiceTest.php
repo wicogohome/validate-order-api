@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\Services;
 
-use PHPUnit\Framework\TestCase;
-use App\Services\CurrencyService;
 use App\Repositories\CurrencyRepository;
+use App\Services\CurrencyService;
+use PHPUnit\Framework\TestCase;
 
 class CurrencyServiceTest extends TestCase
 {
     protected $currencyRepositoryMock;
+
     protected $currencyService;
 
     private string $defaultCurrency;
@@ -30,7 +31,7 @@ class CurrencyServiceTest extends TestCase
         $price = 100;
         $fromCurrency = 'USD';
         $defaultCurrency = 'TWD';
-        $exchangeRate = (float)31;
+        $exchangeRate = (float) 31;
 
         $this->currencyRepositoryMock
             ->method('getExchangeRate')

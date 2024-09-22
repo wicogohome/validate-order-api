@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Transformers;
 
-use PHPUnit\Framework\TestCase;
-use App\Services\CurrencyService;
 use App\Exceptions\TransformerException;
+use App\Services\CurrencyService;
 use App\Transformers\CurrencyTransformer;
+use PHPUnit\Framework\TestCase;
 
 class CurrencyTransformerTest extends TestCase
 {
@@ -121,7 +121,6 @@ class CurrencyTransformerTest extends TestCase
         ];
 
         $result = $this->currencyTransformer->transform($data);
-
 
         $this->assertEquals(array_merge($data, $expectedResult), $result);
     }

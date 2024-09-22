@@ -47,5 +47,4 @@ class NormalizeOrderAPITest extends TestCase
         $response = $this->postJson(route('api.order.normalize'), $exampleInput);
         $response->assertStatus(400);
     }
-
 }

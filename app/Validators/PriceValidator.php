@@ -2,8 +2,8 @@
 
 namespace App\Validators;
 
-use App\Services\CurrencyService;
 use App\Exceptions\ValidatorException;
+use App\Services\CurrencyService;
 
 class PriceValidator implements ValidatorInterface
 {

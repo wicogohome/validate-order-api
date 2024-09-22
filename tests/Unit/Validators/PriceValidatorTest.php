@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Validators;
 
-use PHPUnit\Framework\TestCase;
+use App\Exceptions\ValidatorException;
 use App\Services\CurrencyService;
 use App\Validators\PriceValidator;
-use App\Exceptions\ValidatorException;
+use PHPUnit\Framework\TestCase;
 
 class PriceValidatorTest extends TestCase
 {

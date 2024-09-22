@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Validators;
 
-use PHPUnit\Framework\TestCase;
-use App\Validators\NameValidator;
 use App\Exceptions\ValidatorException;
+use App\Validators\NameValidator;
+use PHPUnit\Framework\TestCase;
 
 class NameValidatorTest extends TestCase
 {

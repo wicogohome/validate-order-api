@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NormalizeOrderRequest;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\NormalizeOrderRequest;
 
 class OrderController extends Controller
 {
