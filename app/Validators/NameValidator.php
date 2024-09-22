@@ -13,9 +13,10 @@ class NameValidator implements ValidatorInterface
         }
 
         $name = $data['name'];
-
-        $this->validateAllEngChars($name);
-        $this->validateCapitalization($name);
+        $words = collect(explode(' ', $name));
+        $words
+            ->each(fn ($word) => $this->validateAllEngChars($word))
+            ->each(fn ($word) => $this->validateCapitalization($word));
 
         return true;
     }
