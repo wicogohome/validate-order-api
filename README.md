@@ -16,15 +16,38 @@
 如果是用Laravel ORM去寫，會先確認DB::getQueryLog()的SQL情況，如果與預期不符，像是有N+1就先修正。  
 並在調整前記錄執行時間，確保調整有用。
 
-先確認資料表都有主索引。
+先確認資料表都有主索引，再看看有無需要其他索引，但除非執行速度上必要，不然不會多加。  
 
-接著調整SQL，看看需不需要先WHERE currency = 'TWD'，  
-再移除DATE等function，改用BETWEEN '2023-05-01 00:00:00' AND '2023-05-31 23:59:59'。  
+如要添加，則會嘗試對orders下複合索引(created_at, currency, bnb_id, amount)，並使用EXPLAIN來確認真的有用。  
+因為database可以直接在索引中取得所有所需資料，也可以加速排序，理論上應能提升查詢速度，但代價是會增加更新table的開銷，所以非必要還是不想下索引。
+
+接著調整SQL，移除DATE等function，避免它阻止使用索引。  
 看看能不能減少JOIN，我會用LEFT JOIN是希望也能撈出異常資料（沒有bnb卻有order），避免長期忽略有問題的資料，不過若需要最快，那還是會改成INNER JOIN。
 
-然後確認資料表有無需要其他索引，但除非執行速度上必要，不然不會多加索引，如增加也會用EXPLAIN來確認真的有用。
+也會使用CTE，先對orders處理出符合條件的五月訂單並計算總金額，最後才進行JOIN和排序，如此也能提升SQL的可讀性。
+
+綜合以上的修改結果就會是：
+```sql
+    WITH may_orders AS (
+        SELECT bnb_id, SUM(amount) AS may_amount
+        FROM orders
+        WHERE 
+            created_at >= '2023-05-01' AND 
+            created_at < '2023-06-01' AND 
+            currency = 'TWD'
+        GROUP BY bnb_id
+    )
+    SELECT may_orders.bnb_id, bnbs.name AS bnb_name, may_orders.may_amount
+    FROM may_orders 
+    INNER JOIN bnbs ON may_orders.bnb_id = bnbs.id
+    ORDER BY may_orders.may_amount DESC
+    LIMIT 10;
+```
 
 再積極一點就是把常用資料特別組合成一張查詢用的表，或是在離峰時間用排程執行SQL，再Email報表（我想這是要做報表吧？）
+
+
+
 
 # API測驗
 
@@ -55,7 +78,9 @@ $ docker compose -f docker-compose.local.yml up
 ※docker-compose.yml是sail開發用的，請避免使用
 
 
-完成後即可對localhost:80施打，詳細請見[API文件](api.md)
+完成後即可對localhost:80施打，詳細請見[API文件](api.md)  
+
+> 為避免啟用不必要的container，本docker compose並不包含mysql。因此直接進入`http://localhost/`，畫面出現mysql連線錯誤是正常的
 
 
 ## CI/CD
@@ -106,7 +131,7 @@ OrderService裡注入了3個Validator，分別處理name, price, currency的驗�
 OrderService使用Validator的方式為透過$validators和DI注入需要的Validator類別，如要增加對其他欄位的驗證，只需要新增類別繼承ValidatorInterface，並於OrderService注入，即可達成修改，而不需要更動OrderService的邏輯，也無法改動Validator的基本架構，故符合對擴充開放，對修改封閉的原則。
 
 #### 里氏替換
-凡繼承ValidatorInterface的子類，都可以互相替換而不影響正確性；TransformerInterface同理。
+凡繼承ValidatorInterface的子類，都可以互相替換而不影響正確性，因為都是Vailator，且有實作相同的validate()；TransformerInterface同理。
 
 
 #### 介面隔離
