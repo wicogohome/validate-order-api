@@ -77,7 +77,7 @@ Response:
                 "street": "fuxing-south-road"
             },
             "price": 310, // 經過轉換
-            "currency": "USD" // 經過轉換
+            "currency": "TWD" // 經過轉換
         }
     }
 }
