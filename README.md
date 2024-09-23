@@ -1,7 +1,30 @@
 # 資料庫測驗
 
 1.  
+```SQL
+   SELECT orders.bnb_id, bnbs.name AS bnb_name , SUM(orders.amount) AS may_amount
+   FROM orders
+   LEFT JOIN bnbs ON orders.bnb_id = bnbs.id
+   WHERE 
+	   ( DATE(orders.created_at) BETWEEN '2023-05-01' AND '2023-05-31' )  AND
+	   ( currency = 'TWD' )
+	GROUP BY orders.bnb_id
+	ORDER BY may_amount DESC
+	LIMIT 10 ;
+```
 2.
+如果是用Laravel ORM去寫，會先確認DB::getQueryLog()的SQL情況，如果與預期不符，像是有N+1就先修正。  
+並在調整前記錄執行時間，確保調整有用。
+
+先確認資料表都有主索引。
+
+接著調整SQL，看看需不需要先WHERE currency = 'TWD'，  
+再移除DATE等function，改用BETWEEN '2023-05-01 00:00:00' AND '2023-05-31 23:59:59'。  
+看看能不能減少JOIN，我會用LEFT JOIN是希望也能撈出異常資料（沒有bnb卻有order），避免長期忽略有問題的資料，不過若需要最快，那還是會改成INNER JOIN。
+
+然後確認資料表有無需要其他索引，但除非執行速度上必要，不然不會多加索引，如增加也會用EXPLAIN來確認真的有用。
+
+再積極一點就是把常用資料特別組合成一張查詢用的表，或是在離峰時間用排程執行SQL，再Email報表（我想這是要做報表吧？）
 
 # API測驗
 
