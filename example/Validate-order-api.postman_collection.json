@@ -1,0 +1,602 @@
+{
+	"info": {
+		"_postman_id": "c4d62f58-006f-4fb1-99f7-f152cef353eb",
+		"name": "Validate-order-api",
+		"description": "# API串接文件\n\n## Base URL\n\n`http://localhost`\n\n## Endpoints\n\n### `POST /api/orders`\n\n提供訂單格式 檢查 與 轉換\n\n### Headers\n\n- `Content-Type:application/json`\n    \n- `Accept:application/json`\n    \n\n### Parameters\n\n- `id` (required): string，暫定長度不可超過50字。\n    \n- `name` (required): string，暫定長度不可超過50字。需為全英文（可包含半形空白），且每個單字首字為大寫。\n    \n- `address` (required): array，需包含以下欄位：\n    \n    - `city` (required): string，暫定長度不可超過50字。\n        \n    - `district` (required): string，暫定長度不可超過50字。\n        \n    - `street` (required): string，暫定長度不可超過50字。\n        \n- `price` (required): numerice，該欄位會搭配currency進行轉換，轉換成TWD後，金額不可大於2000。\n    \n- `currency` (required): string，長度僅可為3。須為TWD或USD\n    \n\n### Response\n\n回傳一個JSON object，結構如下：\n\n- `status`: 狀態編號\n    \n- `data`: 轉換後的訂單資料, 包含以下properties:\n    \n    - `id`: string\n        \n    - `name`: string\n        \n    - `address` : string\n        \n        - `city`: string\n            \n        - `district` : string\n            \n        - `street` : string\n            \n    - `price` : numerice，若原貨幣為USD，其值會被乘上匯率後返回。\n        \n    - `currency` : string，若原貨幣為USD，會連同金額被修改為TWD。\n        \n        ### Example\n        \n\nRequest:\n\n``` json\nPOST /api/orders\n// data\n{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 10,\n    \"currency\": \"USD\"\n}\n\n ```\n\nResponse:\n\n``` json\n{\n    \"status\": 200,\n    \"data\": {\n        {\n            \"id\": \"A0000001\",\n            \"name\": \"Melody Holiday Inn\",\n            \"address\": {\n                \"city\": \"taipei-city\",\n                \"district\": \"da-an-district\",\n                \"street\": \"fuxing-south-road\"\n            },\n            \"price\": 310, // 經過轉換\n            \"currency\": \"USD\" // 經過轉換\n        }\n    }\n}\n\n ```\n\n## Errors\n\n本API可能有以下錯誤狀態：\n\n- `422 FormRequest Error`: （FormRequest）輸入資料不符合基本格式，或有缺少。\n    \n- `400 Invalid Error`: 輸入的資料不符合指定規則.\n    \n\n### Response\n\n400會回傳一個JSON object，結構如下：\n\n- `status`: 狀態編號\n    \n- `message`: 詳細錯誤資訊\n    \n\n### Example\n\n``` json\n{\n    \"status\": 400,\n    \"message\": \"Name contains non-English characters\" // name包含非英文字元\n}\n\n ```",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20862487"
+	},
+	"item": [
+		{
+			"name": "/api/orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2500,\n    \"currency\": \"TWD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"orders"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": [
+				{
+					"name": "valid（TWD）",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2000,\n    \"currency\": \"TWD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:44:24 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 200,\n    \"data\": {\n        \"id\": \"A0000001\",\n        \"name\": \"Melody Holiday Inn\",\n        \"address\": {\n            \"city\": \"taipei-city\",\n            \"district\": \"da-an-district\",\n            \"street\": \"fuxing-south-road\"\n        },\n        \"price\": 2000,\n        \"currency\": \"TWD\"\n    }\n}"
+				},
+				{
+					"name": "valid（USD）",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 10,\n    \"currency\": \"USD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.25.4"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 23 Sep 2024 01:40:50 GMT"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 200,\n    \"data\": {\n        \"id\": \"A0000001\",\n        \"name\": \"Melody Holiday Inn\",\n        \"address\": {\n            \"city\": \"taipei-city\",\n            \"district\": \"da-an-district\",\n            \"street\": \"fuxing-south-road\"\n        },\n        \"price\": 310,\n        \"currency\": \"TWD\"\n    }\n}"
+				},
+				{
+					"name": "Name contains non-English characters",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn 非英文字元\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2000,\n    \"currency\": \"TWD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:44:24 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 400,\n    \"message\": \"Name contains non-English characters\"\n}"
+				},
+				{
+					"name": "Name is not capitalized",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2500,\n    \"currency\": \"TWD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:47:16 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 400,\n    \"message\": \"Name is not capitalized\"\n}"
+				},
+				{
+					"name": "Price is over 2000（TWD）",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2500,\n    \"currency\": \"TWD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:47:55 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 400,\n    \"message\": \"Price is over 2000\"\n}"
+				},
+				{
+					"name": "Price is over 2000（USD）",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2000,\n    \"currency\": \"USD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:49:11 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 400,\n    \"message\": \"Price is over 2000\"\n}"
+				},
+				{
+					"name": "Currency format is wrong",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"A0000001\",\n    \"name\": \"Melody Holiday Inn\",\n    \"address\": {\n        \"city\": \"taipei-city\",\n        \"district\": \"da-an-district\",\n        \"street\": \"fuxing-south-road\"\n    },\n    \"price\": 2000,\n    \"currency\": \"JPY\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.11"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 22 Sep 2024 11:48:26 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": 400,\n    \"message\": \"Currency format is wrong\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
